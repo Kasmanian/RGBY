@@ -7,6 +7,7 @@ class Game {
                 this.size = this.lastX = this.lastY = this.liveX = this.liveY = arg;
                 this.grid = this.makeGrid(arg);
                 this.meta = new Set();
+                this.signals = {'move': [], 'done': []};
                 break
             default:
                 break
@@ -105,6 +106,15 @@ class Game {
             string += `\n`;
         }
         return string;
+    }
+    onMove(callBack) {
+        this.signals['move'].push(callBack);
+    }
+    onDone(callBack) {
+        this.signals['done'].push(callBack);
+    }
+    update(event) {
+        for (const signal of event) signal(this.grid);
     }
 }
 function type(value) {
