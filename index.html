@@ -5,11 +5,52 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RGBY</title>
-    <link rel="stylesheet" href="styles.css"/>
+    <link rel="stylesheet" href="styles-viewport.css"/>
     <link rel="icon" href="favicon.ico?" type="image/x-icon">
     <link rel="shortcut icon" href="favicon.ico?" type="image/x-icon">
 </head>
 <body>
+    <div id="root">
+        <div id="head">
+            <div id="head-upper">
+                <span>RGBY</span>
+            </div>
+            <div id="head-lower">
+                <div id="head-lower-1" class="head-lower-all">
+                    <span><img src="./assets/menu-outline.svg" class="svg-icon-filter size-150-icon clickable" alt="menu"></span>
+                    <span><img src="./assets/help-circle-outline.svg" class="svg-icon-filter size-150-icon clickable" alt="menu"></span>
+                </div>
+                <div id="head-lower-2" class="head-lower-all">
+                    <span id="game-clock">0:00.00</span>
+                </div>
+                <div id="head-lower-3" class="head-lower-all">
+                    <span><img src="./assets/podium-outline.svg" class="svg-icon-filter size-125-icon clickable" alt="stats"></span>
+                    <span><img src="./assets/settings-outline.svg" class="svg-icon-filter size-125-icon clickable" alt="settings"></span>
+                </div>
+            </div>
+        </div>
+        <div id="body">
+            <div id="grid">
+
+            </div>
+        </div>
+        <div id="tail">
+            <div id="tail-upper">
+                <div id="tail-upper-1" class="head-lower-all">
+                    <span><span id="move-count">0</span> moves</span>
+                </div>
+                <div id="tail-upper-2" class="head-lower-all">
+                    <span class="clickable">SHUFFLE</span>
+                </div>
+                <div id="tail-upper-3" class="head-lower-all">
+                    <span><span id="move-clock">0.00</span> mps</span>
+                </div>
+            </div>
+            <div id="tail-lower">
+                <span>Tap SHUFFLE to displace the tiles, then tap the grey boxes in order to move the selected tiles until the grid is unscrambled. Tapping the intersection will switch your selection.</span>
+            </div>
+        </div>
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="./app.js" type="module"></script>
 </body>
