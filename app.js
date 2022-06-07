@@ -192,7 +192,7 @@ class App {
                 let msg = {
                     title: 'RGBY',
                     text: "Can you solve this 2D Rubik's puzzle?",
-                    url: 'https://github.com/Kasmanian'
+                    url: 'https://www.playrgby.com'
                 }
                 navigator.share(msg);
                 return;
