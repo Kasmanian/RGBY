@@ -2,18 +2,23 @@ import { alph, redef } from './funcs.js';
 export default class HTML {
     constructor() {
     }
-    renderBoard(game, size, keybindsXAxis, keybindsYAxis, lastAxis, state) {
+    renderBoard(game, isBlind, size, ruler, keybindsXAxis, keybindsYAxis, lastAxis, state) {
         let grid  = ``;
         let yAxis = ``;
         let xAxis = ``;
         keybindsXAxis = Object.keys(keybindsXAxis);
         keybindsYAxis = Object.keys(keybindsYAxis);
         for (let i=0; i<size; i++) {
-            xAxis += `<span class="flex">${keybindsXAxis[i]}</span>`;
-            yAxis += `<span class="flex">${keybindsYAxis[i]}</span>`;
+            if (ruler) {
+                xAxis += `<span class="flex">${keybindsXAxis[i]}</span>`;
+                yAxis += `<span class="flex">${keybindsYAxis[i]}</span>`;
+            }
             for (let j=0; j<size; j++) {
                 let tile = game.grid[i][j]!=0? game.grid[i][j] : ``;
-                let deco = game.grid[i][j]!=0? 
+                let deco = isBlind&&state>1&&state!=-2&&game.grid[i][j]!=0?
+                    `style="background: url('./assets/6.ico');
+                            background-size: cover;"` :
+                    game.grid[i][j]!=0? 
                     `style="background: url('./assets/${game.grid[i][j]}.ico');
                             background-size: cover;"` : 
                     `style="background: url('./assets/dot.svg');
@@ -44,10 +49,13 @@ export default class HTML {
                 grid += `<div id="${alph(j)}-${alph(i)}" class="${type} ${grow}" ${deco}>${tile}</div>`;
             }
         }
-        return `<div id="board">
-                    <div id="y-axis" style="grid-template-rows: repeat(${size}, 1fr);">${yAxis}</div>
+        let xAxisRuler = ruler? `<div id="y-axis" style="grid-template-rows: repeat(${size}, 1fr);">${yAxis}</div>` : ``;
+        let yAxisRuler = ruler? `<div id="x-axis" style="grid-template-columns: repeat(${size}, 1fr);">${xAxis}</div>` : ``;
+        let boardParts = ruler? `rulerHUD` : `simpleHUD`;
+        return `<div id="board" class="${boardParts}">
+                    ${xAxisRuler}
                     <div id="grid" style="grid-template-columns: repeat(${size}, 1fr); grid-template-rows: repeat(${size}, 1fr);">${grid}</div>
-                    <div id="x-axis" style="grid-template-columns: repeat(${size}, 1fr);">${xAxis}</div>
+                    ${yAxisRuler}
                 </div>`;
 
     }
@@ -59,6 +67,8 @@ export default class HTML {
         document.getElementById('mvsps').textContent = this.renderMPS(moves, time);
     }
     renderMainMenu(isBlind, isPractice, isBlade, size) {
+        let addLater1 = `${this.renderGameTypeOption('practice', isPractice)}`;
+        let addLater2 = `${this.renderGameTypeOption('blade', isBlade)}`;
         let miscOpen = window.mobileCheck()? 'misc-open-mobile' : 'misc-open-pc';
         return `<div id="misc-overlay" class="${miscOpen}">
                     <div id="misc" class="mutateSave">
@@ -69,8 +79,6 @@ export default class HTML {
                             <span class="table-cell"><img id="x" src="./assets/close-outline.svg" class="menu-item menu"></span>
                         </div>
                         ${this.renderGameTypeOption('blind', isBlind)}
-                        ${this.renderGameTypeOption('practice', isPractice)}
-                        ${this.renderGameTypeOption('blade', isBlade)}
                         <div id="mode" class="flex">
                             <div id="previous" class="menu-item">
                                 <span><img src="./assets/chevron-back-outline.svg"></span>
@@ -144,6 +152,8 @@ export default class HTML {
                 </div>`
     }
     renderStatsMenu(isBlind, isPractice, isBlade, size, save, key, animation) {
+        let addLater1 = `${this.renderGameTypeOption('practice', isPractice)}`;
+        let addLater2 = `${this.renderGameTypeOption('blade', isBlade)}`;
         let miscOpen = !animation? '' : window.mobileCheck()? 'misc-open-mobile' : 'misc-open-pc';
         let mode = save['stats'][key];
         return `<div id="misc-overlay" class="${miscOpen}">
@@ -155,8 +165,6 @@ export default class HTML {
                             <span class="table-cell"><img id="x" src="./assets/close-outline.svg" class="menu-item menu"></span>
                         </div>
                         ${this.renderGameTypeOption('blind', isBlind)}
-                        ${this.renderGameTypeOption('practice', isPractice)}
-                        ${this.renderGameTypeOption('blade', isBlade)}
                         <div id="mode" class="flex">
                             <div id="previous" class="menu-item">
                                 <span><img src="./assets/chevron-back-outline.svg"></span>
@@ -191,7 +199,56 @@ export default class HTML {
                     </div>
                 </div>`;
     }
-    renderSettingsMenu() {
+    renderSettingsMenu(dark, ruler, keybindsXAxis, keybindsYAxis) {
+        let disableDarkCheck = dark? 'unchecked' : 'checked';
+        let disableRulerCheck = ruler? 'unchecked' : 'checked';
+        let disableDarkValue = dark? 'on' : 'off';
+        let disableRulerValue = ruler? 'on' : 'off';
+        let miscOpen = window.mobileCheck()? 'misc-open-mobile' : 'misc-open-pc';
+        let xAxisKeys = ``;
+        let yAxisKeys = ``;
+        let xKeyList = Object.keys(keybindsXAxis);
+        let yKeyList = Object.keys(keybindsYAxis);
+        for (let i=0; i<12; i++) {
+            let space = i<10? `&nbsp` : ``;
+            xAxisKeys += `<form id="x${i}" class="keybind">
+                            <label for="keyx${i}">${space}${i}:</label>
+                            <input type="text" value="${xKeyList[i]}" maxlength="1" autocomplete="off" id="keyx${i}">
+                          </form>`;
+            yAxisKeys += `<form id="y${i}" class="keybind">
+                            <label for="keyy${i}">${space}${i}:</label>
+                            <input type="text" value="${yKeyList[i]}" maxlength="1" autocomplete="off" id="keyy${i}">
+                          </form>`;
+        }
+        return `<div id="misc-overlay" class="${miscOpen}">
+                    <div id="misc" class="settings mutateSave">
+                        <div id="label" class="table">
+                            <span class="table-cell">SETTINGS</span>
+                        </div>
+                        <div id="close" class="table">
+                            <span class="table-cell"><img id="x" src="./assets/close-outline.svg" class="menu-item"></span>
+                        </div>
+                        <form id="disableDark">
+                            <input type="checkbox" id="darkToggle" class="menu-item" ${disableDarkCheck} value="${disableDarkValue}">
+                            <label for="darkToggle">Disable Dark Mode</label><br>
+                        </form>
+                        <form id="disableRuler">
+                            <input type="checkbox" id="rulerToggle" class="menu-item" ${disableRulerCheck} value="${disableRulerValue}">
+                            <label for="rulerToggle">Disable Grid Ruler</label><br>
+                        </form>
+                        <div id="keybinds">
+                            <span>KEYBINDS</span>
+                        </div>
+                        <div id="x-label">
+                            <span>X-AXIS</span>
+                        </div>
+                        <div id="y-label">
+                            <span>Y-AXIS</span>
+                        </div>
+                        ${xAxisKeys}
+                        ${yAxisKeys}
+                    </div>
+                </div>`;
     }
     renderTime(time) {
         return time!=0? `${Math.trunc(time/60000)}:${String(`${Math.trunc(time/1000)%60}`).padStart(2, '0')}.${String(`${Math.trunc(time)%1000}`).padStart(3, '0')}` : `-:--.---`;
