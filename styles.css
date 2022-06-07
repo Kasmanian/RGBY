@@ -26,7 +26,7 @@ body {
     height: 100vh;
     font-family:'Comfortaa Variable';
     background-color: var(--M);
-    overflow: hidden;
+    /* overflow: hidden; */
 }
 
 #main {

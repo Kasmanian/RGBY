@@ -73,7 +73,7 @@ export default class Game {
     }
     shuffle() {
         // Performs randomized moves over a set number of iterations in order to simulate shuffling.
-        for (let i=0; i<3; i++) {
+        for (let i=0; i<9999; i++) {
             let dist;
             let axis = Math.random()<0.5? -1 : 1;
             let xRange = [this.liveX, this.size*3-this.liveX-this.size];
