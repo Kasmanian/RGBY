@@ -79,10 +79,15 @@ body {
 }
 
 #main-body {
-    background-color: var(--primary-D);
+    background-color: var(--primary-M);
     min-height: 60vh;
     display: flex;
     justify-content: center;
+    transition: background-color .25s;
+}
+
+#main:only-of-type #main-body {
+    background-color: var(--primary-D);
 }
 
 #grid {
@@ -132,9 +137,9 @@ body {
     justify-content: space-between;
     flex-direction: column;
     background-color: var(--primary-M);
-    border-top: 0.10rem solid var(--primary-A);
+    /* border-top: 0.10rem solid var(--primary-A); */
     position: fixed;
-    top: 15vh;
+    top: 15.5vh;
     min-width: 100%;
     min-height: 84vh;
 }

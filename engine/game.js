@@ -1,4 +1,5 @@
-class Game {
+import { type, copy, alph } from './funcs.js';
+export default class Game {
     constructor(arg) {
         switch(type(arg)) {
             case `object`:
@@ -39,6 +40,7 @@ class Game {
         // Given a distance dist and an axis, the grid will be updated to reflect a move:
         // +1 axis = vertical; -1 axis = horizontal; dist can be negative or positive along each axis.
         // Returns true if the grid was changed or false otherwise.
+        if (dist==0) return false;
         let a, b, c, d;
         let lastGrid = copy(this.grid);
         let lastMeta = new Set(this.meta);
@@ -50,10 +52,11 @@ class Game {
             for (let j=0; inBounds&&j<this.size; j++) {
                 [a, c] = axis<0? [i, i] : dist<0? [this.liveY+dist+j, this.liveY+j] : [this.liveY+dist+this.size-1-j, this.liveY+this.size-1-j];
                 [b, d] = axis>0? [i, i] : dist<0? [this.liveX+dist+j, this.liveX+j] : [this.liveX+dist+this.size-1-j, this.liveX+this.size-1-j];
-                if (type(this.grid[a][b])!=`number`||type(this.grid[c][d])!=`number`) inBounds = false;
+                if (this.grid[a]==undefined||this.grid[c]==undefined) inBounds = false;
+                if(inBounds) if (type(this.grid[a][b])!=`number`||type(this.grid[c][d])!=`number`) inBounds = false;
                 else {
                     [this.grid[a][b], this.grid[c][d]] = [this.grid[c][d], this.grid[a][b]];
-                    this.meta.add(`${a}, ${b}`);
+                    this.meta.add(`${alph(b)}-${alph(a)}`);
                 }
             }
         }
@@ -70,7 +73,7 @@ class Game {
     }
     shuffle() {
         // Performs randomized moves over a set number of iterations in order to simulate shuffling.
-        for (let i=0; i<9999; i++) {
+        for (let i=0; i<3; i++) {
             let dist;
             let axis = Math.random()<0.5? -1 : 1;
             let xRange = [this.liveX, this.size*3-this.liveX-this.size];
@@ -116,12 +119,4 @@ class Game {
     update(event) {
         for (const signal of event) signal(this.grid);
     }
-}
-function type(value) {
-    let type = Object.prototype.toString.call(value);
-    type = type.substring(type.indexOf(' ')+1, type.indexOf(']'));
-    return type.toLowerCase();
-}
-function copy(array) {
-    return array.map(e => Array.isArray(e) ? copy(e) : e);
 }

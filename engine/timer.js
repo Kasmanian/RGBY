@@ -1,11 +1,23 @@
-class Timer {
+export default class Timer {
     constructor() {
-        this.startTime = new Date().getTime();
+        this.startTime = window.performance.now();
+        this.pauseTime = 0;
+        this.pauseToll = 0;
+        this.isPaused = false;
     }
     timeElapsed() {
-        return new Date().getTime()-this.startTime;
+        let time = window.performance.now();
+        return this.isPaused? Math.ceil((time-this.startTime)-(time-this.pauseTime))
+                            : Math.ceil((time-this.startTime)-this.pauseToll);
     }
-    timeLeft(duration) {
-        return this.startTime+duration-new Date().getTime();
+    pause() {
+        let time = window.performance.now();
+        this.pauseTime = this.isPaused? this.pauseTime : time;
+        this.isPaused = true;
+    }
+    unpause() {
+        let time = window.performance.now();
+        this.pauseToll += this.isPaused? time-this.pauseTime : 0;
+        this.isPaused = false;
     }
 }
